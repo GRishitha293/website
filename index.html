@@ -26,7 +26,7 @@
 
 <!-- Cart Popup -->
 <div class="cart-box" id="cart-box">
-  <h2>Your Cart</h2>
+  <h2>Your Cart <button onclick="toggleCart()" class="close-btn">×</button></h2>
   <ul id="cart-items"></ul>
   <h3>Total: ₹<span id="total">0</span></h3>
 
@@ -35,23 +35,11 @@
   <a id="whatsapp-btn" target="_blank">
     <button class="whatsapp">Order on WhatsApp</button>
   </a>
-</div>
 
-<div class="cart-box">
-  <h2>Cart</h2>
-  <ul id="cart-items"></ul>
-  <h3>Total: ₹<span id="total">0</span></h3>
-
-  <a id="whatsapp-btn" target="_blank">
-    <button class="whatsapp">Order on WhatsApp</button>
-  </a>
-</div>
-<a href="upi://pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR">
-  <button class="upi">Pay via UPI</button>
-</a>
-<div class="cart-actions">
-  <button onclick="toggleCart()">View Cart </button>
-  <button onclick="clearCart()" class="clear-btn">Clear Cart </button>
+  <h3>Payment Options:</h3>
+  <button onclick="payGPay()" class="payment-btn">Pay with Google Pay</button>
+  <button onclick="payPhonePe()" class="payment-btn">Pay with PhonePe</button>
+  <button onclick="cod()" class="payment-btn">Cash on Delivery</button>
 </div>
 <script src="script.js"></script>
 </body>
