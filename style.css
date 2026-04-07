@@ -1,0 +1,84 @@
+body {
+  font-family: Arial;
+  margin: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  background: green;
+  color: white;
+  padding: 10px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 50px;
+  border-radius: 50%;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+}
+
+.cart-box {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  padding: 15px;
+  border-top: 2px solid #ccc;
+}
+
+button {
+  background: green;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.whatsapp {
+  width: 100%;
+  background: #25D366;
+  margin-top: 10px;
+  padding: 10px;
+}
+.upi {
+  width: 100%;
+  background: purple;
+  color: white;
+  padding: 12px;
+  margin-top: 10px;
+  border: 10px;
+  cursor: pointer;
+}
+.clear-btn {
+  width: 100%;
+  background: red;
+  color: white;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+}
