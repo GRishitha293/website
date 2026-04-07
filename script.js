@@ -42,43 +42,131 @@ products.forEach((p, i) => {
   div.innerHTML = `
     <h3>${p.name}</h3>
     <p>₹${p.price}</p>
-    <button onclick="addToCart(${i})">Add</button>
+    <div id="controls-${i}" class="card-controls" style="display:none;">
+      <button onclick="changeProductQuantity(${i}, -1)">-</button>
+      <span id="qty-${i}">0</span>
+      <button onclick="changeProductQuantity(${i}, 1)">+</button>
+    </div>
+    <button id="add-${i}" onclick="addToCart(${i})">Add</button>
   `;
   productList.appendChild(div);
 });
 
 function addToCart(i) {
-  cart.push(products[i]);
+  changeProductQuantity(i, 1);
+}
+
+function changeProductQuantity(i, delta) {
+  const existing = cart.find(c => c.item.name === products[i].name);
+  if (existing) {
+    existing.quantity += delta;
+    if (existing.quantity <= 0) {
+      cart = cart.filter(c => c.item.name !== products[i].name);
+    }
+  } else if (delta > 0) {
+    cart.push({item: products[i], quantity: 1});
+  }
   updateCart();
 }
 
 function updateCart() {
   cartItems.innerHTML = "";
   let sum = 0;
-
-  cart.forEach(item => {
+  let qty = 0;
+  cart.forEach((c, index) => {
     const li = document.createElement("li");
-    li.textContent = item.name + " - ₹" + item.price;
+    li.innerHTML = `${c.item.name} - ₹${c.item.price} x ${c.quantity} 
+      <button onclick="changeQuantity(${index}, -1)">-</button> 
+      <button onclick="changeQuantity(${index}, 1)">+</button>`;
     cartItems.appendChild(li);
-    sum += item.price;
+    sum += c.item.price * c.quantity;
+    qty += c.quantity;
   });
 
   total.textContent = sum;
-  cartCount.textContent = cart.length;
+  cartCount.textContent = qty;
+  document.getElementById("cart-summary").textContent = `${qty} items | ₹${sum}`;
+
+  products.forEach((p, i) => {
+    const qtySpan = document.getElementById(`qty-${i}`);
+    const controls = document.getElementById(`controls-${i}`);
+    const addButton = document.getElementById(`add-${i}`);
+    const existing = cart.find(c => c.item.name === p.name);
+
+    if (qtySpan) {
+      qtySpan.textContent = existing ? existing.quantity : 0;
+    }
+    if (controls && addButton) {
+      if (existing && existing.quantity > 0) {
+        controls.style.display = "flex";
+        addButton.style.display = "none";
+      } else {
+        controls.style.display = "none";
+        addButton.style.display = "inline-block";
+      }
+    }
+  });
 
   updateWhatsApp();
 }
 
+function changeQuantity(index, delta) {
+  cart[index].quantity += delta;
+  if (cart[index].quantity <= 0) {
+    cart.splice(index, 1);
+  }
+  updateCart();
+}
+
 function updateWhatsApp() {
   let msg = "Hello, I want to order:\n\n";
-  cart.forEach((item, i) => {
-    msg += (i+1) + ". " + item.name + " - ₹" + item.price + "\n";
+  cart.forEach((c, i) => {
+    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
   });
 
   msg += "\nTotal: ₹" + total.textContent;
 
   const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
   whatsappBtn.href = url;
+}
+function payUPI() {
+  window.open('upi://pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
+}
+function payGPay() {
+  let msg = "Hello, I want to order (Paid via Google Pay):\n\n";
+  cart.forEach((c, i) => {
+    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
+  });
+
+  msg += "\nTotal: ₹" + total.textContent;
+
+  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
+  window.open(url);
+  window.open('tez://upi/pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
+}
+
+function payPhonePe() {
+  let msg = "Hello, I want to order (Paid via PhonePe):\n\n";
+  cart.forEach((c, i) => {
+    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
+  });
+
+  msg += "\nTotal: ₹" + total.textContent;
+
+  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
+  window.open(url);
+  window.open('phonepe://pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
+}
+function cod() {
+  let msg = "Hello, I want to order with Cash on Delivery:\n\n";
+  cart.forEach((c, i) => {
+    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
+  });
+
+  msg += "\nTotal: ₹" + total.textContent;
+
+  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
+  window.open(url);
 }
 function toggleCart() {
   const cartBox = document.querySelector(".cart-box");
