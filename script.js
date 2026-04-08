@@ -164,4 +164,15 @@ function cod() {
   });
   msg += `\nTotal: ₹${total.textContent}`;
   window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`);
+function updateUPILinks() {
+  const amount = total.textContent;
+  document.getElementById("gpay-btn").href =
+    `gpay://upi/pay?pa=sarikondarahul2004@oksbi&pn=RR%20Enterprises&am=${amount}&cu=INR&tn=Order%20Payment`;
+
+  document.getElementById("phonepe-btn").href =
+    `phonepe://pay?pa=sarikondarahul2004@oksbi&pn=RR%20Enterprises&am=${amount}&cu=INR&tn=Order%20Payment`;
+}
+
+// Call this after updating cart
+updateUPILinks();
 }
