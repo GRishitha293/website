@@ -1,5 +1,5 @@
 const products = [
-  { name: "Bisleri 2L", price: 200,Image:"bisleri.jpeg"},
+  { name: "Bisleri 2L", price: 200 },
   { name: "Bisleri 1L", price: 140 },
   { name: "Bisleri 500ml", price: 175 },
   { name: "Bindu Jeera Masala Soda", price: 240 },
@@ -16,12 +16,12 @@ const products = [
   { name: "Campa Black", price: 215 },
   { name: "Fanta 250ml", price: 460 },
   { name: "Maaza", price: 500 },
-  { name: "frooti", price: 400},
-  { name: "frooti bottle", price: 330},
-  { name: "redbull", price: 2270},
-  { name: "hell", price: 1200},
-  { name: "jersey badam milk", price: 700},
-  { name: "jersey panner 200gms", price: 100},
+  { name: "Frooti", price: 400 },
+  { name: "Frooti Bottle", price: 330 },
+  { name: "Redbull", price: 2270 },
+  { name: "Hell", price: 1200 },
+  { name: "Jersey Badam Milk", price: 700 },
+  { name: "Jersey Paneer 200gms", price: 100 },
 ];
 
 let cart = [];
@@ -31,8 +31,6 @@ const cartItems = document.getElementById("cart-items");
 const total = document.getElementById("total");
 const cartCount = document.getElementById("cart-count");
 const whatsappBtn = document.getElementById("whatsapp-btn");
-
-// Add your WhatsApp number here
 const phoneNumber = "9392829603";
 
 // Display products
@@ -47,7 +45,7 @@ products.forEach((p, i) => {
       <span id="qty-${i}">0</span>
       <button onclick="changeProductQuantity(${i}, 1)">+</button>
     </div>
-    <button id="add-${i}" onclick="addToCart(${i})">Add</button>
+    <button id="add-${i}" class="add-btn" onclick="addToCart(${i})">Add</button>
   `;
   productList.appendChild(div);
 });
@@ -60,11 +58,9 @@ function changeProductQuantity(i, delta) {
   const existing = cart.find(c => c.item.name === products[i].name);
   if (existing) {
     existing.quantity += delta;
-    if (existing.quantity <= 0) {
-      cart = cart.filter(c => c.item.name !== products[i].name);
-    }
+    if (existing.quantity <= 0) cart = cart.filter(c => c.item.name !== products[i].name);
   } else if (delta > 0) {
-    cart.push({item: products[i], quantity: 1});
+    cart.push({ item: products[i], quantity: 1 });
   }
   updateCart();
 }
@@ -73,11 +69,17 @@ function updateCart() {
   cartItems.innerHTML = "";
   let sum = 0;
   let qty = 0;
+
   cart.forEach((c, index) => {
     const li = document.createElement("li");
-    li.innerHTML = `${c.item.name} - ₹${c.item.price} x ${c.quantity} 
-      <button onclick="changeQuantity(${index}, -1)">-</button> 
-      <button onclick="changeQuantity(${index}, 1)">+</button>`;
+    li.innerHTML = `
+      ${c.item.name} - ₹${c.item.price} 
+      <div class="quantity-controls">
+        <button onclick="changeQuantity(${index}, -1)">-</button>
+        <span class="quantity">${c.quantity}</span>
+        <button onclick="changeQuantity(${index}, 1)">+</button>
+      </div>
+    `;
     cartItems.appendChild(li);
     sum += c.item.price * c.quantity;
     qty += c.quantity;
@@ -87,15 +89,14 @@ function updateCart() {
   cartCount.textContent = qty;
   document.getElementById("cart-summary").textContent = `${qty} items | ₹${sum}`;
 
+  // Update product cards
   products.forEach((p, i) => {
     const qtySpan = document.getElementById(`qty-${i}`);
     const controls = document.getElementById(`controls-${i}`);
     const addButton = document.getElementById(`add-${i}`);
     const existing = cart.find(c => c.item.name === p.name);
 
-    if (qtySpan) {
-      qtySpan.textContent = existing ? existing.quantity : 0;
-    }
+    if (qtySpan) qtySpan.textContent = existing ? existing.quantity : 0;
     if (controls && addButton) {
       if (existing && existing.quantity > 0) {
         controls.style.display = "flex";
@@ -108,76 +109,59 @@ function updateCart() {
   });
 
   updateWhatsApp();
+
+  // Show/hide bottom cart bar
+  const cartBar = document.getElementById("cart-bar");
+  if (cart.length > 0) cartBar.classList.add("show");
+  else {
+    cartBar.classList.remove("show");
+    document.getElementById("cart-box").style.display = "none";
+  }
 }
 
 function changeQuantity(index, delta) {
   cart[index].quantity += delta;
-  if (cart[index].quantity <= 0) {
-    cart.splice(index, 1);
-  }
+  if (cart[index].quantity <= 0) cart.splice(index, 1);
   updateCart();
 }
 
 function updateWhatsApp() {
   let msg = "Hello, I want to order:\n\n";
   cart.forEach((c, i) => {
-    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
+    msg += `${i + 1}. ${c.item.name} - ₹${c.item.price} x ${c.quantity}\n`;
   });
-
-  msg += "\nTotal: ₹" + total.textContent;
-
-  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
-  whatsappBtn.href = url;
-}
-function payUPI() {
-  window.open('upi://pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
-}
-function payGPay() {
-  let msg = "Hello, I want to order (Paid via Google Pay):\n\n";
-  cart.forEach((c, i) => {
-    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
-  });
-
-  msg += "\nTotal: ₹" + total.textContent;
-
-  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
-  window.open(url);
-  window.open('tez://upi/pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
+  msg += `\nTotal: ₹${total.textContent}`;
+  whatsappBtn.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
 }
 
-function payPhonePe() {
-  let msg = "Hello, I want to order (Paid via PhonePe):\n\n";
-  cart.forEach((c, i) => {
-    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
-  });
-
-  msg += "\nTotal: ₹" + total.textContent;
-
-  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
-  window.open(url);
-  window.open('phonepe://pay?pa=ssarikondarahul2004@oksbi&pn=RR%20Enterprises&cu=INR&am=' + total.textContent);
-}
-function cod() {
-  let msg = "Hello, I want to order with Cash on Delivery:\n\n";
-  cart.forEach((c, i) => {
-    msg += (i+1) + ". " + c.item.name + " - ₹" + c.item.price + " x " + c.quantity + "\n";
-  });
-
-  msg += "\nTotal: ₹" + total.textContent;
-
-  const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(msg);
-  window.open(url);
-}
 function toggleCart() {
-  const cartBox = document.querySelector(".cart-box");
-  if (cartBox.style.display === "none") {
-    cartBox.style.display = "block";
-  } else {
-    cartBox.style.display = "none";
-  }
+  const cartBox = document.getElementById("cart-box");
+  cartBox.style.display = (cartBox.style.display === "block") ? "none" : "block";
 }
 
 function clearCart() {
   cart = [];
   updateCart();
+}
+
+// Payment functions
+function payGPay() {
+  const amount = total.textContent;
+  const upiLink = `gpay://upi/pay?pa=sarikondarahul2004@oksbi&pn=RR%20Enterprises&am=${amount}&cu=INR&tn=Order%20Payment`;
+  window.location.href = upiLink;
+}
+
+function payPhonePe() {
+  const amount = total.textContent;
+  const upiLink = `phonepe://pay?pa=sarikondarahul2004@oksbi&pn=RR%20Enterprises&am=${amount}&cu=INR&tn=Order%20Payment`;
+  window.location.href = upiLink;
+}
+
+function cod() {
+  let msg = "Hello, I want to order with Cash on Delivery:\n\n";
+  cart.forEach((c, i) => {
+    msg += `${i + 1}. ${c.item.name} - ₹${c.item.price} x ${c.quantity}\n`;
+  });
+  msg += `\nTotal: ₹${total.textContent}`;
+  window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`);
 }
