@@ -199,3 +199,84 @@ header p {
 }
 
 #contact { padding: 40px; background: #f5f5f5; text-align: center; }
+/* === MOBILE VIEW ONLY === */
+@media (max-width: 768px) {
+  /* Make products single column like a mobile app */
+  .products {
+    grid-template-columns: 1fr; /* one product per row */
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* Header stacks vertically */
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Cards take full width, bigger text */
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .card h3 {
+    font-size: 1.2rem;
+  }
+
+  .card p {
+    font-size: 1rem;
+  }
+
+  /* Buttons bigger for touch */
+  .card button,
+  .card-controls button {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* Bottom cart bar bigger and full width */
+  .cart-bar {
+    width: 95%;
+    max-width: 100%;
+    bottom: 10px;
+    padding: 14px;
+    border-radius: 24px;
+  }
+
+  /* Cart drawer full width on mobile */
+  .cart-box {
+    width: 100%;
+    height: 80vh;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 16px;
+  }
+
+  /* Cart list items bigger for touch */
+  .cart-box ul li {
+    padding: 14px 0;
+    font-size: 16px;
+  }
+
+  .cart-box ul li button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .cart-box ul li span.quantity {
+    width: 40px;
+    font-size: 16px;
+  }
+
+  /* Cart buttons wider */
+  .clear-btn,
+  .payment-btn,
+  .whatsapp {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px 0;
+  }
+}
